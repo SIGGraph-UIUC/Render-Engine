@@ -1,6 +1,7 @@
 #ifndef RENDER_ENGINE_VKRENDERENGINE_H
 #define RENDER_ENGINE_VKRENDERENGINE_H
 
+#include <VkBootstrap.h>
 #include "RenderEngine.h"
 
 class VkRenderEngine : public RenderEngine {

@@ -79,10 +79,6 @@
 #  define VULKAN_HPP_ASSERT_ON_RESULT VULKAN_HPP_ASSERT
 #endif
 
-#if !defined( VULKAN_HPP_STATIC_ASSERT )
-#  define VULKAN_HPP_STATIC_ASSERT static_assert
-#endif
-
 #if !defined( VULKAN_HPP_ENABLE_DYNAMIC_LOADER_TOOL )
 #  define VULKAN_HPP_ENABLE_DYNAMIC_LOADER_TOOL 1
 #endif
@@ -119,7 +115,7 @@ extern "C" __declspec( dllimport ) FARPROC __stdcall GetProcAddress( HINSTANCE h
 #  include <span>
 #endif
 
-static_assert( VK_HEADER_VERSION == 196, "Wrong VK_HEADER_VERSION!" );
+static_assert( VK_HEADER_VERSION == 189, "Wrong VK_HEADER_VERSION!" );
 
 // 32-bit vulkan is not typesafe for handles, so don't allow copy constructors on this platform by default.
 // To enable this feature on 32-bit platforms please define VULKAN_HPP_TYPESAFE_CONVERSION
@@ -669,8 +665,7 @@ namespace VULKAN_HPP_NAMESPACE
     VULKAN_HPP_CONSTEXPR ArrayWrapper1D( std::array<T, N> const & data ) VULKAN_HPP_NOEXCEPT : std::array<T, N>( data )
     {}
 
-#if ( VK_USE_64_BIT_PTR_DEFINES == 0 )
-    // on 32 bit compiles, needs overloads on index type int to resolve ambiguities
+#if defined( _WIN32 ) && !defined( _WIN64 )
     VULKAN_HPP_CONSTEXPR T const & operator[]( int index ) const VULKAN_HPP_NOEXCEPT
     {
       return std::array<T, N>::operator[]( index );
@@ -1385,24 +1380,15 @@ namespace VULKAN_HPP_NAMESPACE
 
   class DispatchLoaderBase
   {
+#if !defined( NDEBUG )
   public:
-    DispatchLoaderBase() = default;
-    DispatchLoaderBase( std::nullptr_t )
-#if !defined( NDEBUG )
-      : m_valid( false )
-#endif
-    {}
-
-#if !defined( NDEBUG )
     size_t getVkHeaderVersion() const
     {
-      VULKAN_HPP_ASSERT( m_valid );
       return vkHeaderVersion;
     }
 
   private:
     size_t vkHeaderVersion = VK_HEADER_VERSION;
-    bool   m_valid         = true;
 #endif
   };
 
@@ -5478,49 +5464,6 @@ namespace VULKAN_HPP_NAMESPACE
     }
 #  endif /*VK_USE_PLATFORM_FUCHSIA*/
 
-#  if defined( VK_USE_PLATFORM_FUCHSIA )
-    //=== VK_FUCHSIA_buffer_collection ===
-
-    VkResult vkCreateBufferCollectionFUCHSIA( VkDevice                                    device,
-                                              const VkBufferCollectionCreateInfoFUCHSIA * pCreateInfo,
-                                              const VkAllocationCallbacks *               pAllocator,
-                                              VkBufferCollectionFUCHSIA * pCollection ) const VULKAN_HPP_NOEXCEPT
-    {
-      return ::vkCreateBufferCollectionFUCHSIA( device, pCreateInfo, pAllocator, pCollection );
-    }
-
-    VkResult vkSetBufferCollectionImageConstraintsFUCHSIA(
-      VkDevice                              device,
-      VkBufferCollectionFUCHSIA             collection,
-      const VkImageConstraintsInfoFUCHSIA * pImageConstraintsInfo ) const VULKAN_HPP_NOEXCEPT
-    {
-      return ::vkSetBufferCollectionImageConstraintsFUCHSIA( device, collection, pImageConstraintsInfo );
-    }
-
-    VkResult vkSetBufferCollectionBufferConstraintsFUCHSIA(
-      VkDevice                               device,
-      VkBufferCollectionFUCHSIA              collection,
-      const VkBufferConstraintsInfoFUCHSIA * pBufferConstraintsInfo ) const VULKAN_HPP_NOEXCEPT
-    {
-      return ::vkSetBufferCollectionBufferConstraintsFUCHSIA( device, collection, pBufferConstraintsInfo );
-    }
-
-    void vkDestroyBufferCollectionFUCHSIA( VkDevice                      device,
-                                           VkBufferCollectionFUCHSIA     collection,
-                                           const VkAllocationCallbacks * pAllocator ) const VULKAN_HPP_NOEXCEPT
-    {
-      return ::vkDestroyBufferCollectionFUCHSIA( device, collection, pAllocator );
-    }
-
-    VkResult vkGetBufferCollectionPropertiesFUCHSIA( VkDevice                              device,
-                                                     VkBufferCollectionFUCHSIA             collection,
-                                                     VkBufferCollectionPropertiesFUCHSIA * pProperties ) const
-      VULKAN_HPP_NOEXCEPT
-    {
-      return ::vkGetBufferCollectionPropertiesFUCHSIA( device, collection, pProperties );
-    }
-#  endif /*VK_USE_PLATFORM_FUCHSIA*/
-
     //=== VK_HUAWEI_subpass_shading ===
 
     VkResult vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI( VkDevice     device,
@@ -5634,40 +5577,6 @@ namespace VULKAN_HPP_NAMESPACE
       return ::vkCmdDrawMultiIndexedEXT(
         commandBuffer, drawCount, pIndexInfo, instanceCount, firstInstance, stride, pVertexOffset );
     }
-
-    //=== VK_EXT_pageable_device_local_memory ===
-
-    void
-      vkSetDeviceMemoryPriorityEXT( VkDevice device, VkDeviceMemory memory, float priority ) const VULKAN_HPP_NOEXCEPT
-    {
-      return ::vkSetDeviceMemoryPriorityEXT( device, memory, priority );
-    }
-
-    //=== VK_KHR_maintenance4 ===
-
-    void vkGetDeviceBufferMemoryRequirementsKHR( VkDevice                                    device,
-                                                 const VkDeviceBufferMemoryRequirementsKHR * pInfo,
-                                                 VkMemoryRequirements2 * pMemoryRequirements ) const VULKAN_HPP_NOEXCEPT
-    {
-      return ::vkGetDeviceBufferMemoryRequirementsKHR( device, pInfo, pMemoryRequirements );
-    }
-
-    void vkGetDeviceImageMemoryRequirementsKHR( VkDevice                                   device,
-                                                const VkDeviceImageMemoryRequirementsKHR * pInfo,
-                                                VkMemoryRequirements2 * pMemoryRequirements ) const VULKAN_HPP_NOEXCEPT
-    {
-      return ::vkGetDeviceImageMemoryRequirementsKHR( device, pInfo, pMemoryRequirements );
-    }
-
-    void vkGetDeviceImageSparseMemoryRequirementsKHR(
-      VkDevice                                   device,
-      const VkDeviceImageMemoryRequirementsKHR * pInfo,
-      uint32_t *                                 pSparseMemoryRequirementCount,
-      VkSparseImageMemoryRequirements2 *         pSparseMemoryRequirements ) const VULKAN_HPP_NOEXCEPT
-    {
-      return ::vkGetDeviceImageSparseMemoryRequirementsKHR(
-        device, pInfo, pSparseMemoryRequirementCount, pSparseMemoryRequirements );
-    }
   };
 #endif
 
@@ -5713,12 +5622,7 @@ namespace VULKAN_HPP_NAMESPACE
       }
   extern VULKAN_HPP_STORAGE_API DispatchLoaderDynamic defaultDispatchLoaderDynamic;
 #  else
-  static inline ::VULKAN_HPP_NAMESPACE::DispatchLoaderStatic & getDispatchLoaderStatic()
-  {
-    static ::VULKAN_HPP_NAMESPACE::DispatchLoaderStatic dls;
-    return dls;
-  }
-#    define VULKAN_HPP_DEFAULT_DISPATCHER ::VULKAN_HPP_NAMESPACE::getDispatchLoaderStatic()
+#    define VULKAN_HPP_DEFAULT_DISPATCHER ::VULKAN_HPP_NAMESPACE::DispatchLoaderStatic()
 #    define VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
 #  endif
 #endif
@@ -6297,45 +6201,42 @@ namespace VULKAN_HPP_NAMESPACE
   };
 #  endif /*VK_USE_PLATFORM_WIN32_KHR*/
 
-  namespace
+  [[noreturn]] static void throwResultException( Result result, char const * message )
   {
-    [[noreturn]] void throwResultException( Result result, char const * message )
+    switch ( result )
     {
-      switch ( result )
-      {
-        case Result::eErrorOutOfHostMemory: throw OutOfHostMemoryError( message );
-        case Result::eErrorOutOfDeviceMemory: throw OutOfDeviceMemoryError( message );
-        case Result::eErrorInitializationFailed: throw InitializationFailedError( message );
-        case Result::eErrorDeviceLost: throw DeviceLostError( message );
-        case Result::eErrorMemoryMapFailed: throw MemoryMapFailedError( message );
-        case Result::eErrorLayerNotPresent: throw LayerNotPresentError( message );
-        case Result::eErrorExtensionNotPresent: throw ExtensionNotPresentError( message );
-        case Result::eErrorFeatureNotPresent: throw FeatureNotPresentError( message );
-        case Result::eErrorIncompatibleDriver: throw IncompatibleDriverError( message );
-        case Result::eErrorTooManyObjects: throw TooManyObjectsError( message );
-        case Result::eErrorFormatNotSupported: throw FormatNotSupportedError( message );
-        case Result::eErrorFragmentedPool: throw FragmentedPoolError( message );
-        case Result::eErrorUnknown: throw UnknownError( message );
-        case Result::eErrorOutOfPoolMemory: throw OutOfPoolMemoryError( message );
-        case Result::eErrorInvalidExternalHandle: throw InvalidExternalHandleError( message );
-        case Result::eErrorFragmentation: throw FragmentationError( message );
-        case Result::eErrorInvalidOpaqueCaptureAddress: throw InvalidOpaqueCaptureAddressError( message );
-        case Result::eErrorSurfaceLostKHR: throw SurfaceLostKHRError( message );
-        case Result::eErrorNativeWindowInUseKHR: throw NativeWindowInUseKHRError( message );
-        case Result::eErrorOutOfDateKHR: throw OutOfDateKHRError( message );
-        case Result::eErrorIncompatibleDisplayKHR: throw IncompatibleDisplayKHRError( message );
-        case Result::eErrorValidationFailedEXT: throw ValidationFailedEXTError( message );
-        case Result::eErrorInvalidShaderNV: throw InvalidShaderNVError( message );
-        case Result::eErrorInvalidDrmFormatModifierPlaneLayoutEXT:
-          throw InvalidDrmFormatModifierPlaneLayoutEXTError( message );
-        case Result::eErrorNotPermittedEXT: throw NotPermittedEXTError( message );
+      case Result::eErrorOutOfHostMemory: throw OutOfHostMemoryError( message );
+      case Result::eErrorOutOfDeviceMemory: throw OutOfDeviceMemoryError( message );
+      case Result::eErrorInitializationFailed: throw InitializationFailedError( message );
+      case Result::eErrorDeviceLost: throw DeviceLostError( message );
+      case Result::eErrorMemoryMapFailed: throw MemoryMapFailedError( message );
+      case Result::eErrorLayerNotPresent: throw LayerNotPresentError( message );
+      case Result::eErrorExtensionNotPresent: throw ExtensionNotPresentError( message );
+      case Result::eErrorFeatureNotPresent: throw FeatureNotPresentError( message );
+      case Result::eErrorIncompatibleDriver: throw IncompatibleDriverError( message );
+      case Result::eErrorTooManyObjects: throw TooManyObjectsError( message );
+      case Result::eErrorFormatNotSupported: throw FormatNotSupportedError( message );
+      case Result::eErrorFragmentedPool: throw FragmentedPoolError( message );
+      case Result::eErrorUnknown: throw UnknownError( message );
+      case Result::eErrorOutOfPoolMemory: throw OutOfPoolMemoryError( message );
+      case Result::eErrorInvalidExternalHandle: throw InvalidExternalHandleError( message );
+      case Result::eErrorFragmentation: throw FragmentationError( message );
+      case Result::eErrorInvalidOpaqueCaptureAddress: throw InvalidOpaqueCaptureAddressError( message );
+      case Result::eErrorSurfaceLostKHR: throw SurfaceLostKHRError( message );
+      case Result::eErrorNativeWindowInUseKHR: throw NativeWindowInUseKHRError( message );
+      case Result::eErrorOutOfDateKHR: throw OutOfDateKHRError( message );
+      case Result::eErrorIncompatibleDisplayKHR: throw IncompatibleDisplayKHRError( message );
+      case Result::eErrorValidationFailedEXT: throw ValidationFailedEXTError( message );
+      case Result::eErrorInvalidShaderNV: throw InvalidShaderNVError( message );
+      case Result::eErrorInvalidDrmFormatModifierPlaneLayoutEXT:
+        throw InvalidDrmFormatModifierPlaneLayoutEXTError( message );
+      case Result::eErrorNotPermittedEXT: throw NotPermittedEXTError( message );
 #  if defined( VK_USE_PLATFORM_WIN32_KHR )
-        case Result::eErrorFullScreenExclusiveModeLostEXT: throw FullScreenExclusiveModeLostEXTError( message );
+      case Result::eErrorFullScreenExclusiveModeLostEXT: throw FullScreenExclusiveModeLostEXTError( message );
 #  endif /*VK_USE_PLATFORM_WIN32_KHR*/
-        default: throw SystemError( make_error_code( result ) );
-      }
+      default: throw SystemError( make_error_code( result ) );
     }
-  }  // namespace
+  }
 #endif
 
   template <typename T>
@@ -7748,66 +7649,6 @@ namespace VULKAN_HPP_NAMESPACE
 #endif /*VK_ENABLE_BETA_EXTENSIONS*/
 
 #if defined( VK_ENABLE_BETA_EXTENSIONS )
-  //=== VK_EXT_video_encode_h265 ===
-  template <>
-  struct StructExtends<VideoEncodeH265CapabilitiesEXT, VideoCapabilitiesKHR>
-  {
-    enum
-    {
-      value = true
-    };
-  };
-  template <>
-  struct StructExtends<VideoEncodeH265SessionCreateInfoEXT, VideoSessionCreateInfoKHR>
-  {
-    enum
-    {
-      value = true
-    };
-  };
-  template <>
-  struct StructExtends<VideoEncodeH265SessionParametersCreateInfoEXT, VideoSessionParametersCreateInfoKHR>
-  {
-    enum
-    {
-      value = true
-    };
-  };
-  template <>
-  struct StructExtends<VideoEncodeH265SessionParametersAddInfoEXT, VideoSessionParametersUpdateInfoKHR>
-  {
-    enum
-    {
-      value = true
-    };
-  };
-  template <>
-  struct StructExtends<VideoEncodeH265VclFrameInfoEXT, VideoEncodeInfoKHR>
-  {
-    enum
-    {
-      value = true
-    };
-  };
-  template <>
-  struct StructExtends<VideoEncodeH265EmitPictureParametersEXT, VideoEncodeInfoKHR>
-  {
-    enum
-    {
-      value = true
-    };
-  };
-  template <>
-  struct StructExtends<VideoEncodeH265ProfileEXT, VideoProfileKHR>
-  {
-    enum
-    {
-      value = true
-    };
-  };
-#endif /*VK_ENABLE_BETA_EXTENSIONS*/
-
-#if defined( VK_ENABLE_BETA_EXTENSIONS )
   //=== VK_EXT_video_decode_h264 ===
   template <>
   struct StructExtends<VideoDecodeH264ProfileEXT, VideoProfileKHR>
@@ -8367,14 +8208,6 @@ namespace VULKAN_HPP_NAMESPACE
       value = true
     };
   };
-  template <>
-  struct StructExtends<AndroidHardwareBufferFormatProperties2ANDROID, AndroidHardwareBufferPropertiesANDROID>
-  {
-    enum
-    {
-      value = true
-    };
-  };
 #endif /*VK_USE_PLATFORM_ANDROID_KHR*/
 
   //=== VK_EXT_inline_uniform_block ===
@@ -8602,14 +8435,6 @@ namespace VULKAN_HPP_NAMESPACE
   };
   template <>
   struct StructExtends<ImageDrmFormatModifierExplicitCreateInfoEXT, ImageCreateInfo>
-  {
-    enum
-    {
-      value = true
-    };
-  };
-  template <>
-  struct StructExtends<DrmFormatModifierPropertiesList2EXT, FormatProperties2>
   {
     enum
     {
@@ -9823,32 +9648,6 @@ namespace VULKAN_HPP_NAMESPACE
     };
   };
 
-  //=== VK_KHR_shader_integer_dot_product ===
-  template <>
-  struct StructExtends<PhysicalDeviceShaderIntegerDotProductFeaturesKHR, PhysicalDeviceFeatures2>
-  {
-    enum
-    {
-      value = true
-    };
-  };
-  template <>
-  struct StructExtends<PhysicalDeviceShaderIntegerDotProductFeaturesKHR, DeviceCreateInfo>
-  {
-    enum
-    {
-      value = true
-    };
-  };
-  template <>
-  struct StructExtends<PhysicalDeviceShaderIntegerDotProductPropertiesKHR, PhysicalDeviceProperties2>
-  {
-    enum
-    {
-      value = true
-    };
-  };
-
   //=== VK_EXT_texel_buffer_alignment ===
   template <>
   struct StructExtends<PhysicalDeviceTexelBufferAlignmentFeaturesEXT, PhysicalDeviceFeatures2>
@@ -10342,24 +10141,6 @@ namespace VULKAN_HPP_NAMESPACE
     };
   };
 
-  //=== VK_EXT_rgba10x6_formats ===
-  template <>
-  struct StructExtends<PhysicalDeviceRGBA10X6FormatsFeaturesEXT, PhysicalDeviceFeatures2>
-  {
-    enum
-    {
-      value = true
-    };
-  };
-  template <>
-  struct StructExtends<PhysicalDeviceRGBA10X6FormatsFeaturesEXT, DeviceCreateInfo>
-  {
-    enum
-    {
-      value = true
-    };
-  };
-
   //=== VK_KHR_ray_tracing_pipeline ===
   template <>
   struct StructExtends<PhysicalDeviceRayTracingPipelineFeaturesKHR, PhysicalDeviceFeatures2>
@@ -10466,66 +10247,10 @@ namespace VULKAN_HPP_NAMESPACE
     };
   };
 
-  //=== VK_EXT_primitive_topology_list_restart ===
-  template <>
-  struct StructExtends<PhysicalDevicePrimitiveTopologyListRestartFeaturesEXT, PhysicalDeviceFeatures2>
-  {
-    enum
-    {
-      value = true
-    };
-  };
-  template <>
-  struct StructExtends<PhysicalDevicePrimitiveTopologyListRestartFeaturesEXT, DeviceCreateInfo>
-  {
-    enum
-    {
-      value = true
-    };
-  };
-
-  //=== VK_KHR_format_feature_flags2 ===
-  template <>
-  struct StructExtends<FormatProperties3KHR, FormatProperties2>
-  {
-    enum
-    {
-      value = true
-    };
-  };
-
 #if defined( VK_USE_PLATFORM_FUCHSIA )
   //=== VK_FUCHSIA_external_memory ===
   template <>
   struct StructExtends<ImportMemoryZirconHandleInfoFUCHSIA, MemoryAllocateInfo>
-  {
-    enum
-    {
-      value = true
-    };
-  };
-#endif /*VK_USE_PLATFORM_FUCHSIA*/
-
-#if defined( VK_USE_PLATFORM_FUCHSIA )
-  //=== VK_FUCHSIA_buffer_collection ===
-  template <>
-  struct StructExtends<ImportMemoryBufferCollectionFUCHSIA, MemoryAllocateInfo>
-  {
-    enum
-    {
-      value = true
-    };
-  };
-  template <>
-  struct StructExtends<BufferCollectionImageCreateInfoFUCHSIA, ImageCreateInfo>
-  {
-    enum
-    {
-      value = true
-    };
-  };
-  template <>
-  struct StructExtends<BufferCollectionBufferCreateInfoFUCHSIA, BufferCreateInfo>
   {
     enum
     {
@@ -10693,76 +10418,6 @@ namespace VULKAN_HPP_NAMESPACE
   };
   template <>
   struct StructExtends<PhysicalDeviceMultiDrawPropertiesEXT, PhysicalDeviceProperties2>
-  {
-    enum
-    {
-      value = true
-    };
-  };
-
-  //=== VK_EXT_border_color_swizzle ===
-  template <>
-  struct StructExtends<PhysicalDeviceBorderColorSwizzleFeaturesEXT, PhysicalDeviceFeatures2>
-  {
-    enum
-    {
-      value = true
-    };
-  };
-  template <>
-  struct StructExtends<PhysicalDeviceBorderColorSwizzleFeaturesEXT, DeviceCreateInfo>
-  {
-    enum
-    {
-      value = true
-    };
-  };
-  template <>
-  struct StructExtends<SamplerBorderColorComponentMappingCreateInfoEXT, SamplerCreateInfo>
-  {
-    enum
-    {
-      value = true
-    };
-  };
-
-  //=== VK_EXT_pageable_device_local_memory ===
-  template <>
-  struct StructExtends<PhysicalDevicePageableDeviceLocalMemoryFeaturesEXT, PhysicalDeviceFeatures2>
-  {
-    enum
-    {
-      value = true
-    };
-  };
-  template <>
-  struct StructExtends<PhysicalDevicePageableDeviceLocalMemoryFeaturesEXT, DeviceCreateInfo>
-  {
-    enum
-    {
-      value = true
-    };
-  };
-
-  //=== VK_KHR_maintenance4 ===
-  template <>
-  struct StructExtends<PhysicalDeviceMaintenance4FeaturesKHR, PhysicalDeviceFeatures2>
-  {
-    enum
-    {
-      value = true
-    };
-  };
-  template <>
-  struct StructExtends<PhysicalDeviceMaintenance4FeaturesKHR, DeviceCreateInfo>
-  {
-    enum
-    {
-      value = true
-    };
-  };
-  template <>
-  struct StructExtends<PhysicalDeviceMaintenance4PropertiesKHR, PhysicalDeviceProperties2>
   {
     enum
     {
@@ -11704,21 +11359,6 @@ namespace VULKAN_HPP_NAMESPACE
     PFN_dummy vkGetSemaphoreZirconHandleFUCHSIA_placeholder                 = 0;
 #endif /*VK_USE_PLATFORM_FUCHSIA*/
 
-#if defined( VK_USE_PLATFORM_FUCHSIA )
-    //=== VK_FUCHSIA_buffer_collection ===
-    PFN_vkCreateBufferCollectionFUCHSIA               vkCreateBufferCollectionFUCHSIA               = 0;
-    PFN_vkSetBufferCollectionImageConstraintsFUCHSIA  vkSetBufferCollectionImageConstraintsFUCHSIA  = 0;
-    PFN_vkSetBufferCollectionBufferConstraintsFUCHSIA vkSetBufferCollectionBufferConstraintsFUCHSIA = 0;
-    PFN_vkDestroyBufferCollectionFUCHSIA              vkDestroyBufferCollectionFUCHSIA              = 0;
-    PFN_vkGetBufferCollectionPropertiesFUCHSIA        vkGetBufferCollectionPropertiesFUCHSIA        = 0;
-#else
-    PFN_dummy vkCreateBufferCollectionFUCHSIA_placeholder                   = 0;
-    PFN_dummy vkSetBufferCollectionImageConstraintsFUCHSIA_placeholder      = 0;
-    PFN_dummy vkSetBufferCollectionBufferConstraintsFUCHSIA_placeholder     = 0;
-    PFN_dummy vkDestroyBufferCollectionFUCHSIA_placeholder                  = 0;
-    PFN_dummy vkGetBufferCollectionPropertiesFUCHSIA_placeholder            = 0;
-#endif /*VK_USE_PLATFORM_FUCHSIA*/
-
     //=== VK_HUAWEI_subpass_shading ===
     PFN_vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI = 0;
     PFN_vkCmdSubpassShadingHUAWEI                       vkCmdSubpassShadingHUAWEI                       = 0;
@@ -11751,14 +11391,6 @@ namespace VULKAN_HPP_NAMESPACE
     //=== VK_EXT_multi_draw ===
     PFN_vkCmdDrawMultiEXT        vkCmdDrawMultiEXT        = 0;
     PFN_vkCmdDrawMultiIndexedEXT vkCmdDrawMultiIndexedEXT = 0;
-
-    //=== VK_EXT_pageable_device_local_memory ===
-    PFN_vkSetDeviceMemoryPriorityEXT vkSetDeviceMemoryPriorityEXT = 0;
-
-    //=== VK_KHR_maintenance4 ===
-    PFN_vkGetDeviceBufferMemoryRequirementsKHR      vkGetDeviceBufferMemoryRequirementsKHR      = 0;
-    PFN_vkGetDeviceImageMemoryRequirementsKHR       vkGetDeviceImageMemoryRequirementsKHR       = 0;
-    PFN_vkGetDeviceImageSparseMemoryRequirementsKHR vkGetDeviceImageSparseMemoryRequirementsKHR = 0;
 
   public:
     DispatchLoaderDynamic() VULKAN_HPP_NOEXCEPT                                    = default;
@@ -11864,9 +11496,10 @@ namespace VULKAN_HPP_NAMESPACE
         vkGetInstanceProcAddr( instance, "vkGetPhysicalDeviceQueueFamilyProperties" ) );
       vkGetPhysicalDeviceMemoryProperties = PFN_vkGetPhysicalDeviceMemoryProperties(
         vkGetInstanceProcAddr( instance, "vkGetPhysicalDeviceMemoryProperties" ) );
-      vkGetDeviceProcAddr = PFN_vkGetDeviceProcAddr( vkGetInstanceProcAddr( instance, "vkGetDeviceProcAddr" ) );
-      vkCreateDevice      = PFN_vkCreateDevice( vkGetInstanceProcAddr( instance, "vkCreateDevice" ) );
-      vkDestroyDevice     = PFN_vkDestroyDevice( vkGetInstanceProcAddr( instance, "vkDestroyDevice" ) );
+      vkGetInstanceProcAddr = PFN_vkGetInstanceProcAddr( vkGetInstanceProcAddr( instance, "vkGetInstanceProcAddr" ) );
+      vkGetDeviceProcAddr   = PFN_vkGetDeviceProcAddr( vkGetInstanceProcAddr( instance, "vkGetDeviceProcAddr" ) );
+      vkCreateDevice        = PFN_vkCreateDevice( vkGetInstanceProcAddr( instance, "vkCreateDevice" ) );
+      vkDestroyDevice       = PFN_vkDestroyDevice( vkGetInstanceProcAddr( instance, "vkDestroyDevice" ) );
       vkEnumerateDeviceExtensionProperties = PFN_vkEnumerateDeviceExtensionProperties(
         vkGetInstanceProcAddr( instance, "vkEnumerateDeviceExtensionProperties" ) );
       vkEnumerateDeviceLayerProperties =
@@ -12999,20 +12632,6 @@ namespace VULKAN_HPP_NAMESPACE
         PFN_vkGetSemaphoreZirconHandleFUCHSIA( vkGetInstanceProcAddr( instance, "vkGetSemaphoreZirconHandleFUCHSIA" ) );
 #endif /*VK_USE_PLATFORM_FUCHSIA*/
 
-#if defined( VK_USE_PLATFORM_FUCHSIA )
-      //=== VK_FUCHSIA_buffer_collection ===
-      vkCreateBufferCollectionFUCHSIA =
-        PFN_vkCreateBufferCollectionFUCHSIA( vkGetInstanceProcAddr( instance, "vkCreateBufferCollectionFUCHSIA" ) );
-      vkSetBufferCollectionImageConstraintsFUCHSIA = PFN_vkSetBufferCollectionImageConstraintsFUCHSIA(
-        vkGetInstanceProcAddr( instance, "vkSetBufferCollectionImageConstraintsFUCHSIA" ) );
-      vkSetBufferCollectionBufferConstraintsFUCHSIA = PFN_vkSetBufferCollectionBufferConstraintsFUCHSIA(
-        vkGetInstanceProcAddr( instance, "vkSetBufferCollectionBufferConstraintsFUCHSIA" ) );
-      vkDestroyBufferCollectionFUCHSIA =
-        PFN_vkDestroyBufferCollectionFUCHSIA( vkGetInstanceProcAddr( instance, "vkDestroyBufferCollectionFUCHSIA" ) );
-      vkGetBufferCollectionPropertiesFUCHSIA = PFN_vkGetBufferCollectionPropertiesFUCHSIA(
-        vkGetInstanceProcAddr( instance, "vkGetBufferCollectionPropertiesFUCHSIA" ) );
-#endif /*VK_USE_PLATFORM_FUCHSIA*/
-
       //=== VK_HUAWEI_subpass_shading ===
       vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI = PFN_vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI(
         vkGetInstanceProcAddr( instance, "vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI" ) );
@@ -13054,18 +12673,6 @@ namespace VULKAN_HPP_NAMESPACE
       vkCmdDrawMultiEXT = PFN_vkCmdDrawMultiEXT( vkGetInstanceProcAddr( instance, "vkCmdDrawMultiEXT" ) );
       vkCmdDrawMultiIndexedEXT =
         PFN_vkCmdDrawMultiIndexedEXT( vkGetInstanceProcAddr( instance, "vkCmdDrawMultiIndexedEXT" ) );
-
-      //=== VK_EXT_pageable_device_local_memory ===
-      vkSetDeviceMemoryPriorityEXT =
-        PFN_vkSetDeviceMemoryPriorityEXT( vkGetInstanceProcAddr( instance, "vkSetDeviceMemoryPriorityEXT" ) );
-
-      //=== VK_KHR_maintenance4 ===
-      vkGetDeviceBufferMemoryRequirementsKHR = PFN_vkGetDeviceBufferMemoryRequirementsKHR(
-        vkGetInstanceProcAddr( instance, "vkGetDeviceBufferMemoryRequirementsKHR" ) );
-      vkGetDeviceImageMemoryRequirementsKHR = PFN_vkGetDeviceImageMemoryRequirementsKHR(
-        vkGetInstanceProcAddr( instance, "vkGetDeviceImageMemoryRequirementsKHR" ) );
-      vkGetDeviceImageSparseMemoryRequirementsKHR = PFN_vkGetDeviceImageSparseMemoryRequirementsKHR(
-        vkGetInstanceProcAddr( instance, "vkGetDeviceImageSparseMemoryRequirementsKHR" ) );
     }
 
     void init( VULKAN_HPP_NAMESPACE::Device deviceCpp ) VULKAN_HPP_NOEXCEPT
@@ -13891,20 +13498,6 @@ namespace VULKAN_HPP_NAMESPACE
         PFN_vkGetSemaphoreZirconHandleFUCHSIA( vkGetDeviceProcAddr( device, "vkGetSemaphoreZirconHandleFUCHSIA" ) );
 #endif /*VK_USE_PLATFORM_FUCHSIA*/
 
-#if defined( VK_USE_PLATFORM_FUCHSIA )
-      //=== VK_FUCHSIA_buffer_collection ===
-      vkCreateBufferCollectionFUCHSIA =
-        PFN_vkCreateBufferCollectionFUCHSIA( vkGetDeviceProcAddr( device, "vkCreateBufferCollectionFUCHSIA" ) );
-      vkSetBufferCollectionImageConstraintsFUCHSIA = PFN_vkSetBufferCollectionImageConstraintsFUCHSIA(
-        vkGetDeviceProcAddr( device, "vkSetBufferCollectionImageConstraintsFUCHSIA" ) );
-      vkSetBufferCollectionBufferConstraintsFUCHSIA = PFN_vkSetBufferCollectionBufferConstraintsFUCHSIA(
-        vkGetDeviceProcAddr( device, "vkSetBufferCollectionBufferConstraintsFUCHSIA" ) );
-      vkDestroyBufferCollectionFUCHSIA =
-        PFN_vkDestroyBufferCollectionFUCHSIA( vkGetDeviceProcAddr( device, "vkDestroyBufferCollectionFUCHSIA" ) );
-      vkGetBufferCollectionPropertiesFUCHSIA = PFN_vkGetBufferCollectionPropertiesFUCHSIA(
-        vkGetDeviceProcAddr( device, "vkGetBufferCollectionPropertiesFUCHSIA" ) );
-#endif /*VK_USE_PLATFORM_FUCHSIA*/
-
       //=== VK_HUAWEI_subpass_shading ===
       vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI = PFN_vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI(
         vkGetDeviceProcAddr( device, "vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI" ) );
@@ -13938,18 +13531,6 @@ namespace VULKAN_HPP_NAMESPACE
       vkCmdDrawMultiEXT = PFN_vkCmdDrawMultiEXT( vkGetDeviceProcAddr( device, "vkCmdDrawMultiEXT" ) );
       vkCmdDrawMultiIndexedEXT =
         PFN_vkCmdDrawMultiIndexedEXT( vkGetDeviceProcAddr( device, "vkCmdDrawMultiIndexedEXT" ) );
-
-      //=== VK_EXT_pageable_device_local_memory ===
-      vkSetDeviceMemoryPriorityEXT =
-        PFN_vkSetDeviceMemoryPriorityEXT( vkGetDeviceProcAddr( device, "vkSetDeviceMemoryPriorityEXT" ) );
-
-      //=== VK_KHR_maintenance4 ===
-      vkGetDeviceBufferMemoryRequirementsKHR = PFN_vkGetDeviceBufferMemoryRequirementsKHR(
-        vkGetDeviceProcAddr( device, "vkGetDeviceBufferMemoryRequirementsKHR" ) );
-      vkGetDeviceImageMemoryRequirementsKHR = PFN_vkGetDeviceImageMemoryRequirementsKHR(
-        vkGetDeviceProcAddr( device, "vkGetDeviceImageMemoryRequirementsKHR" ) );
-      vkGetDeviceImageSparseMemoryRequirementsKHR = PFN_vkGetDeviceImageSparseMemoryRequirementsKHR(
-        vkGetDeviceProcAddr( device, "vkGetDeviceImageSparseMemoryRequirementsKHR" ) );
     }
   };
 }  // namespace VULKAN_HPP_NAMESPACE
@@ -14418,21 +13999,6 @@ namespace std
       return std::hash<VkPrivateDataSlotEXT>{}( static_cast<VkPrivateDataSlotEXT>( privateDataSlotEXT ) );
     }
   };
-
-#if defined( VK_USE_PLATFORM_FUCHSIA )
-  //=== VK_FUCHSIA_buffer_collection ===
-
-  template <>
-  struct hash<VULKAN_HPP_NAMESPACE::BufferCollectionFUCHSIA>
-  {
-    std::size_t operator()( VULKAN_HPP_NAMESPACE::BufferCollectionFUCHSIA const & bufferCollectionFUCHSIA ) const
-      VULKAN_HPP_NOEXCEPT
-    {
-      return std::hash<VkBufferCollectionFUCHSIA>{}(
-        static_cast<VkBufferCollectionFUCHSIA>( bufferCollectionFUCHSIA ) );
-    }
-  };
-#endif /*VK_USE_PLATFORM_FUCHSIA*/
 
 }  // namespace std
 #endif
