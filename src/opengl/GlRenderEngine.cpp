@@ -18,6 +18,7 @@ SuccessCode GlRenderEngine::init() {
     {
 	return SuccessCode::FAILURE;
     }
+    return SuccessCode::SUCCESS;
 }
 
 SuccessCode GlRenderEngine::render_scene() {

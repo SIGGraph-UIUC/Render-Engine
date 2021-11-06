@@ -5,7 +5,7 @@
 #ifndef RENDER_ENGINE_RENDERENGINE_H
 #define RENDER_ENGINE_RENDERENGINE_H
 
-#include "enums.h"
+#include "Enums.h"
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>

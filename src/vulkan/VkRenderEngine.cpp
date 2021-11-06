@@ -26,7 +26,7 @@ VkRenderEngine::~VkRenderEngine() {
     _instance.destroy();
 }
 
-SuccessCode VkRenderEngine::choose_device() {
+SuccessCode VkRenderEngine::make_device() {
     vkb::InstanceBuilder instance_builder;
     auto instance_ret = instance_builder.set_app_name("Render Engine")
 					.request_validation_layers()

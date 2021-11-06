@@ -26,7 +26,7 @@ private:
     vk::Device _device;
     vk::PhysicalDevice _physical_device;
 
-    SuccessCode choose_device();
+    SuccessCode make_device();
 };
 
 #endif // RENDER_ENGINE_VKRENDERENGINE_H
