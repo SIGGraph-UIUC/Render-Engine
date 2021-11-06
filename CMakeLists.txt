@@ -6,12 +6,24 @@ set(CMAKE_CXX_STANDARD 17)
 add_subdirectory(external)
 
 include_directories(include/
-                    external/glad/include/
-                    external
                     ${Vulkan_INCLUDE_DIR})
 
-add_executable(${PROJECT_NAME} src/main.cpp src/RenderEngine src/RenderEngine.cpp src/vulkan/VkRenderEngine.cpp src/opengl/GlRenderEngine.cpp
-               ${LIB_SOURCES})
+file(GLOB INTERFACE_SOURCES
+    src/RenderEngine.cpp
+)
+
+file(GLOB OPENGL_ENGINE_SOURCES
+    src/opengl/GlRenderEngine.cpp
+)
+
+file(GLOB VULKAN_ENGINE_SOURCES
+    src/vulkan/VkRenderEngine.cpp
+)
+
+add_executable(${PROJECT_NAME} src/main.cpp ${LIB_SOURCES}
+               ${INTERFACE_SOURCES}
+               ${OPENGL_ENGINE_SOURCES}
+               ${VULKAN_ENGINE_SOURCES})
 
 target_link_libraries(${PROJECT_NAME}
                       glad glfw ${GLFW_LIBRARIES} glm
