@@ -12,6 +12,5 @@ add_subdirectory(glm)
 
 add_subdirectory(vk-bootstrap)
 
-add_library(vma INTERFACE vma)
-
-add_library(vulkan-hpp INTERFACE vulkan)
+add_library(vma INTERFACE)
+target_include_directories(vma INTERFACE vma)

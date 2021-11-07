@@ -1,15 +1,9 @@
-//
-// Created by 16182 on 7/19/2021.
-//
+#ifndef RENDER_ENGINE_VULKAN_UTILS_H
+#define RENDER_ENGINE_VULKAN_UTILS_H
 
-#ifndef UTILS_H
-#define UTILS_H
-
-#include<optional>
-#include<cstdint>
-#define GLFW_INCLUDE_VULKAN
-#include<GLFW/glfw3.h>
-#include<vulkan/vulkan.hpp>
+#include <optional>
+#include <cstdint>
+#include <vulkan/vulkan.hpp>
 #include "VmaUniqueAllocator.h"
 #include "vk_mem_alloc.h"
 
@@ -24,18 +18,8 @@ namespace Utils {
 
     void gpu_memcpy_host_local(VmaAllocator allocator, VmaAllocation dst, void * data, size_t size);
 
-    vk::UniqueSurfaceKHR make_surface(GLFWwindow * window, vk::Instance instance);
-
-    GLFWwindow * make_window(int width, int height);
-
-    vk::UniqueInstance make_instance(const char *const *validation_layers, size_t validation_layers_size);
-
-    vk::PhysicalDevice pick_physical_device(const std::vector<vk::PhysicalDevice> &devices, vk::SurfaceKHR display_surface);
-
-    vk::UniqueDevice make_device(vk::PhysicalDevice physical_device, vk::SurfaceKHR surface, const char * const * required_extensions, size_t extensions_size);
-
     UniqueAllocator make_allocator(vk::Instance instance, vk::PhysicalDevice physical_device, vk::Device device);
 };
 
 
-#endif //UTILS_H
+#endif // RENDER_ENGINE_VULKAN_UTILS_H

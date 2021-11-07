@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 
 project(RenderEngine)
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 add_subdirectory(external)
 
@@ -13,11 +13,11 @@ file(GLOB INTERFACE_SOURCES
 )
 
 file(GLOB OPENGL_ENGINE_SOURCES
-    src/opengl/*
+    src/opengl/*.cpp
 )
 
 file(GLOB VULKAN_ENGINE_SOURCES
-    src/vulkan/*
+    src/vulkan/*.cpp
 )
 
 add_executable(${PROJECT_NAME} src/main.cpp ${LIB_SOURCES}
@@ -27,7 +27,4 @@ add_executable(${PROJECT_NAME} src/main.cpp ${LIB_SOURCES}
 
 target_link_libraries(${PROJECT_NAME}
                       glad glfw ${GLFW_LIBRARIES} glm
-                      vk-bootstrap vma vulkan-hpp
-                      ${Vulkan_LIBRARY})
-
-target_include_directories(${PROJECT_NAME} PUBLIC external/vma)
+                      vk-bootstrap vma ${Vulkan_LIBRARY})

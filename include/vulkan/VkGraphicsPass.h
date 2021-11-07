@@ -1,12 +1,8 @@
-//
-// Created by 16182 on 11/6/2021.
-//
+#ifndef RENDER_ENGINE_VULKAN_VKGRAPHICSPASS_H
+#define RENDER_ENGINE_VULKAN_VKGRAPHICSPASS_H
 
-#ifndef RENDERENGINE_VKVkGraphicsPass_H
-#define RENDERENGINE_VKVkGraphicsPass_H
-
-#include<vulkan/vulkan.hpp>
-#include<vk_mem_alloc.h>
+#include <vulkan/vulkan.hpp>
+#include <vk_mem_alloc.h>
 #include "Buffer.h"
 #include "Image.h"
 #include "PresentPass.h"
@@ -52,4 +48,4 @@ private:
     Image _depth_image;
 };
 
-#endif //RENDERENGINE_VKVkGraphicsPass_H
+#endif // RENDER_ENGINE_VULKAN_VKGRAPHICSPASS_H

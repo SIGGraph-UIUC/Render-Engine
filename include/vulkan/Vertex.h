@@ -1,9 +1,5 @@
-//
-// Created by 16182 on 6/21/2021.
-//
-
-#ifndef VERTEX_H
-#define VERTEX_H
+#ifndef RENDER_ENGINE_VULKAN_VERTEX_H
+#define RENDER_ENGINE_VULKAN_VERTEX_H
 #include<vulkan/vulkan.hpp>
 #define GLM_FORCE_RADIANS
 #include<glm/vec2.hpp>
@@ -53,4 +49,4 @@ struct Vertex {
     }
 };
 
-#endif //VERTEX_H
+#endif // RENDER_ENGINE_VULKAN_VERTEX_H

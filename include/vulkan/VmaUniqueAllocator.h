@@ -1,12 +1,8 @@
-//
-// Created by 16182 on 7/29/2021.
-//
+#ifndef RENDER_ENGINE_VULKAN_VMAUNIQUEALLOCATOR_H
+#define RENDER_ENGINE_VULKAN_VMAUNIQUEALLOCATOR_H
 
-#ifndef VMAUNIQUEALLOCATOR_H
-#define VMAUNIQUEALLOCATOR_H
-
-#include<vk_mem_alloc.h>
-#include<memory>
+#include <vk_mem_alloc.h>
+#include <memory>
 
 class UniqueAllocator {
 public:
@@ -44,4 +40,4 @@ private:
     VmaAllocator _allocator;
 };
 
-#endif //VMAUNIQUEALLOCATOR_H
+#endif // RENDER_ENGINE_VULKAN_VMAUNIQUEALLOCATOR_H

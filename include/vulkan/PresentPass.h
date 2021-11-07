@@ -1,14 +1,10 @@
-//
-// Created by 16182 on 7/29/2021.
-//
+#ifndef RENDER_ENGINE_VULKAN_PRESENTPASS_H
+#define RENDER_ENGINE_VULKAN_PRESENTPASS_H
 
-#ifndef HEART_SIM_PRESENTPASS_H
-#define HEART_SIM_PRESENTPASS_H
-
-#include<vulkan/vulkan.hpp>
-#include<GLFW/glfw3.h>
-#include<vector>
-#include<span>
+#include <vulkan/vulkan.hpp>
+#include <GLFW/glfw3.h>
+#include <vector>
+#include <span>
 class PresentPass {
 public:
     PresentPass() = default;
@@ -55,4 +51,4 @@ private:
 };
 
 
-#endif //HEART_SIM_PRESENTPASS_H
+#endif // RENDER_ENGINE_VULKAN_PRESENTPASS_H

@@ -1,7 +1,3 @@
-//
-// Created by 16182 on 6/27/2021.
-//
-
 #include "vulkan/LoadAssets.h"
 #include <stdexcept>
 #include <fstream>

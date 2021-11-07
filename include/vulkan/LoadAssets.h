@@ -1,9 +1,5 @@
-//
-// Created by 16182 on 6/27/2021.
-//
-
-#ifndef VULKANNOTINCLUDED_LOADASSETS_H
-#define VULKANNOTINCLUDED_LOADASSETS_H
+#ifndef RENDER_ENGINE_VULKAN_LOADASSETS_H
+#define RENDER_ENGINE_VULKAN_LOADASSETS_H
 #include<vector>
 #include<tuple>
 #include<cstdint>
@@ -13,4 +9,4 @@ namespace LoadAssets {
 };
 
 
-#endif //VULKANNOTINCLUDED_LOADASSETS_H
+#endif // RENDER_ENGINE_VULKAN_LOADASSETS_H

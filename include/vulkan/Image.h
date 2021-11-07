@@ -1,9 +1,5 @@
-//
-// Created by 16182 on 7/19/2021.
-//
-
-#ifndef IMAGE_H
-#define IMAGE_H
+#ifndef RENDER_ENGINE_VULKAN_IMAGE_H
+#define RENDER_ENGINE_VULKAN_IMAGE_H
 #include<vulkan/vulkan.hpp>
 #include<vk_mem_alloc.h>
 
@@ -94,4 +90,4 @@ private:
     vk::ImageAspectFlags _aspect_mask{};
 };
 
-#endif //IMAGE_H
+#endif // RENDER_ENGINE_VULKAN_IMAGE_H

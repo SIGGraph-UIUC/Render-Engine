@@ -1,10 +1,7 @@
-//
-// Created by 16182 on 7/29/2021.
-//
-
 #include "vulkan/PresentPass.h"
 #include "vulkan/Utils.h"
-#include<algorithm>
+#include <algorithm>
+
 vk::Extent2D get_extent(vk::SurfaceCapabilitiesKHR &capabilites, GLFWwindow *window) {
     if(capabilites.currentExtent.width != std::numeric_limits<uint32_t>::max()){
         return capabilites.currentExtent;

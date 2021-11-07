@@ -1,27 +1,17 @@
-#ifndef BUFFER_H
-#define BUFFER_H
-#include<vk_mem_alloc.h>
-#include<vulkan/vulkan.hpp>
+#ifndef RENDER_ENGINE_VULKAN_BUFFER_H
+#define RENDER_ENGINE_VULKAN_BUFFER_H
+#include <vk_mem_alloc.h>
+#include <vulkan/vulkan.hpp>
 class Buffer {
 public:
     Buffer() = default;
     Buffer(VmaAllocator allocator, size_t size, vk::BufferUsageFlags buffer_usage, VmaMemoryUsage memory_usage){
-        VkBufferCreateInfo buffer_create_info{
-            .sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
-            .flags = {},
-            .size = size,
-            .usage = (uint32_t)buffer_usage,
-            };
-        VmaAllocationCreateInfo allocation_create_info{
-            .usage = memory_usage,
-            };
-        VkBuffer buffer;
-        VmaAllocation allocation;
-        vmaCreateBuffer(allocator, &buffer_create_info, &allocation_create_info, &buffer, &allocation, nullptr);
-        _buffer = buffer;
+        vk::BufferCreateInfo buffer_create_info{{}, size, buffer_usage};
+        VmaAllocationCreateInfo allocation_create_info{.usage = memory_usage};
+        vmaCreateBuffer(allocator, reinterpret_cast<VkBufferCreateInfo*>(&buffer_create_info),
+                        &allocation_create_info, reinterpret_cast<VkBuffer*>(&_buffer), reinterpret_cast<VmaAllocation*>(&_allocation), nullptr);
         _size = size;
         _allocator = allocator;
-        _allocation = allocation;
     }
     Buffer(Buffer && src) noexcept : _buffer(src._buffer), _allocation(src._allocation), _allocator(src._allocator), _size(src._size){
         src._buffer = vk::Buffer{};
@@ -66,4 +56,4 @@ private:
     size_t _size{};
 };
 
-#endif //BUFFER_H
+#endif // RENDER_ENGINE_VULKAN_BUFFER_H

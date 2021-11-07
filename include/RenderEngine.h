@@ -1,7 +1,3 @@
-//
-// Created by 16182 on 11/1/2021.
-//
-
 #ifndef RENDER_ENGINE_RENDERENGINE_H
 #define RENDER_ENGINE_RENDERENGINE_H
 

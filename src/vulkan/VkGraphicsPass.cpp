@@ -1,9 +1,9 @@
 #include "vulkan/VkGraphicsPass.h"
 #include "vulkan/LoadAssets.h"
 #include "vulkan/Utils.h"
-#include <glm/glm.hpp>
 #include "vulkan/Vertex.h"
-#include<array>
+#include <glm/glm.hpp>
+#include <array>
 
 VkGraphicsPass::VkGraphicsPass(VmaAllocator allocator, vk::PhysicalDevice physical_device, vk::Device device,
                                vk::SurfaceKHR surface, const PresentPass & present_pass) {

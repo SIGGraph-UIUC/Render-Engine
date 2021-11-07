@@ -1,7 +1,3 @@
-//
-// Created by 16182 on 11/1/2021.
-//
-
 #ifndef RENDER_ENGINE_ENUMS_H
 #define RENDER_ENGINE_ENUMS_H
 
@@ -15,4 +11,4 @@ enum class EngineType {
     VULKAN
 };
 
-#endif //RENDER_ENGINE_ENUMS_H
+#endif // RENDER_ENGINE_ENUMS_H
