@@ -19,15 +19,61 @@ SuccessCode VkRenderEngine::init() {
         return result;
     }
     _allocator = Utils::make_allocator(_instance, _physical_device, _device);
+    //    VmaAllocator allocator, vk::Extent2D extent, vk::Format format, vk::ImageUsageFlags image_usage, vk::ImageAspectFlags aspect_mask, VmaMemoryUsage memory_usage
 //    VkGraphicsPass(VmaAllocator allocator, vk::PhysicalDevice physical_device, vk::Device device,
 //                   vk::SurfaceKHR surface, const PresentPass & present_pass);
     _present_pass = PresentPass{_physical_device, _device, _surface, _window, 2};
+
     _graphics_pass = VkGraphicsPass{*_allocator, _physical_device, _device, _surface, _present_pass};
+    std::vector<float> vertices = {
+            0,0,
+            0.5,0.5,
+            0.5,0
+    };
+
+
+    _vertex_buffer = {*_allocator, vertices.size() * sizeof(vertices[0]), vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eVertexBuffer, VMA_MEMORY_USAGE_GPU_ONLY};
+
     return SuccessCode::SUCCESS;
 }
 
 SuccessCode VkRenderEngine::render_scene() {
-    std::cout << "VULKAN ENGINE" << std::endl;
+    static size_t frame_num = 0;
+    frame_num++;
+    uint32_t image_index = _present_pass.get_next_image_index();
+    vk::UniqueCommandBuffer command_buffer = _graphics_pass.create_command_buffer();
+    vk::CommandBufferBeginInfo begin_info{};
+
+    auto descriptor_set = _graphics_pass.create_descriptor_set();
+    command_buffer->begin(begin_info);
+    _graphics_pass.record_begin_render(*command_buffer, _graphics_pass.get_framebuffer(image_index));
+    _graphics_pass.record_draw(*command_buffer, _vertex_buffer, 3);
+//    _graphics_pass.record_draw_indexed(*command_buffer, vertex_buffer, index_buffer, indices.size());
+    //    _graphics.record_draw(*command_buffer, vertex_buffer, vertices.size());
+    _graphics_pass.record_end_render(*command_buffer);
+    command_buffer->end();
+
+    vk::Semaphore wait_semaphores[] = {
+            _present_pass.image_available_semaphore(),
+            };
+    vk::Semaphore signal_semaphores[] = {
+            _present_pass.render_finished_semaphore()
+    };
+    vk::PipelineStageFlags wait_stages = vk::PipelineStageFlagBits::eColorAttachmentOutput;
+
+    vk::SubmitInfo submit_info(
+            std::size(wait_semaphores),
+            wait_semaphores,
+            &wait_stages,
+            1,
+            &*command_buffer,
+            std::size(signal_semaphores),
+            signal_semaphores
+            );
+    _device.resetFences(_present_pass.in_flight_fence());
+    _graphics_pass.queue().submit(submit_info, _present_pass.in_flight_fence());
+    _present_pass.present_image(image_index);
+    _device.waitIdle();
     return SuccessCode::SUCCESS;
 }
 
@@ -40,6 +86,7 @@ VkRenderEngine::~VkRenderEngine() {
 SuccessCode VkRenderEngine::make_device() {
     vkb::InstanceBuilder instance_builder;
     auto instance_ret = instance_builder.set_app_name("Render Engine")
+            .require_api_version(1,2,0)
             .request_validation_layers()
             .use_default_debug_messenger()
             .build();

@@ -4,7 +4,7 @@
 #include "vulkan/Vertex.h"
 #include <glm/glm.hpp>
 #include <array>
-
+#include<iostream>
 VkGraphicsPass::VkGraphicsPass(VmaAllocator allocator, vk::PhysicalDevice physical_device, vk::Device device,
                                vk::SurfaceKHR surface, const PresentPass &present_pass) {
     _device = device;
@@ -33,9 +33,15 @@ VkGraphicsPass::VkGraphicsPass(VmaAllocator allocator, vk::PhysicalDevice physic
     std::array<vk::DescriptorPoolSize, 1> pool_sizes{{
                                                              {vk::DescriptorType::eStorageBuffer, 1}
                                                      }};
+    std::cerr << "here" << std::endl;
+
     _depth_image = Image(allocator, _extent, vk::Format::eD32Sfloat, vk::ImageUsageFlagBits::eDepthStencilAttachment,
                          vk::ImageAspectFlagBits::eDepth, VMA_MEMORY_USAGE_GPU_ONLY);
+    std::cerr << "here" << std::endl;
+
     _depth_image_view = _depth_image.create_view(_device);
+    std::cerr << "here" << std::endl;
+
     _descriptor_pool = device.createDescriptorPoolUnique(
             vk::DescriptorPoolCreateInfo{vk::DescriptorPoolCreateFlagBits::eFreeDescriptorSet, 1, pool_sizes});
 
@@ -52,11 +58,16 @@ VkGraphicsPass::VkGraphicsPass(VmaAllocator allocator, vk::PhysicalDevice physic
             1,
             &push_constant_range
     );
+    std::cerr << "here" << std::endl;
+
     _pipeline_layout = device.createPipelineLayoutUnique(pipeline_layout_create_info);
     _render_pass = make_render_pass(device, present_pass.image_format(), vk::Format::eD32Sfloat);
+    std::cerr << "here" << std::endl;
     _pipeline = make_pipeline(device, _extent);
     auto image_views = present_pass.image_views();
     _frame_buffers = make_framebuffers(image_views);
+    std::cerr << "here" << std::endl;
+
 
 }
 

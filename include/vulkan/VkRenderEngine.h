@@ -32,6 +32,7 @@ private:
     VkGraphicsPass _graphics_pass;
     PresentPass _present_pass;
     UniqueAllocator _allocator;
+    Buffer _vertex_buffer;
     SuccessCode make_device();
 };
 
