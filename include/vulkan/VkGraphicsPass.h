@@ -10,7 +10,8 @@ class VkGraphicsPass {
 public:
     VkGraphicsPass() = default;
     VkGraphicsPass(VkGraphicsPass &) = delete;
-    VkGraphicsPass(VkGraphicsPass &&) = delete;
+    VkGraphicsPass(VkGraphicsPass &&) = default;
+    VkGraphicsPass & operator=(VkGraphicsPass&&) = default;
     VkGraphicsPass(VmaAllocator allocator, vk::PhysicalDevice physical_device, vk::Device device,
                    vk::SurfaceKHR surface, const PresentPass & present_pass);
 

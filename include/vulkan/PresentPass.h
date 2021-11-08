@@ -11,7 +11,8 @@ public:
     PresentPass(vk::PhysicalDevice physical_device, vk::Device device, vk::SurfaceKHR surface,
                 GLFWwindow *window, size_t image_count);
     PresentPass(PresentPass &) = delete;
-    PresentPass(PresentPass &&) = delete;
+    PresentPass(PresentPass &&) = default;
+    PresentPass & operator=(PresentPass&&) = default;
 
     uint32_t get_next_image_index();
 

@@ -12,6 +12,10 @@
 
 #define GLFW_EXPOSE_NATIVE_WIN32
 #include <GLFW/glfw3native.h>
+#include "VkGraphicsPass.h"
+#include "VkGraphicsPass.h"
+#include "vulkan/VmaUniqueAllocator.h"
+
 
 class VkRenderEngine : public RenderEngine {
 public:
@@ -25,7 +29,9 @@ private:
     vk::Instance _instance;
     vk::Device _device;
     vk::PhysicalDevice _physical_device;
-
+    VkGraphicsPass _graphics_pass;
+    PresentPass _present_pass;
+    UniqueAllocator _allocator;
     SuccessCode make_device();
 };
 
