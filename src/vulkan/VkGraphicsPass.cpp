@@ -33,14 +33,11 @@ VkGraphicsPass::VkGraphicsPass(VmaAllocator allocator, vk::PhysicalDevice physic
     std::array<vk::DescriptorPoolSize, 1> pool_sizes{{
                                                              {vk::DescriptorType::eStorageBuffer, 1}
                                                      }};
-    std::cerr << "here" << std::endl;
 
     _depth_image = Image(allocator, _extent, vk::Format::eD32Sfloat, vk::ImageUsageFlagBits::eDepthStencilAttachment,
                          vk::ImageAspectFlagBits::eDepth, VMA_MEMORY_USAGE_GPU_ONLY);
-    std::cerr << "here" << std::endl;
 
     _depth_image_view = _depth_image.create_view(_device);
-    std::cerr << "here" << std::endl;
 
     _descriptor_pool = device.createDescriptorPoolUnique(
             vk::DescriptorPoolCreateInfo{vk::DescriptorPoolCreateFlagBits::eFreeDescriptorSet, 1, pool_sizes});
