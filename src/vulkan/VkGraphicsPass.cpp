@@ -9,8 +9,8 @@ VkGraphicsPass::VkGraphicsPass(VmaAllocator allocator, vk::PhysicalDevice physic
                                vk::SurfaceKHR surface, const PresentPass &present_pass) {
     _device = device;
     _extent = present_pass.extent();
-    auto vert_code = LoadAssets::read_file("tri.vert.spv");
-    auto frag_code = LoadAssets::read_file("tri.frag.spv");
+    auto vert_code = LoadAssets::read_file("src/shaders/tri.vert.spv");
+    auto frag_code = LoadAssets::read_file("src/shaders/tri.frag.spv");
     _vert_shader = device.createShaderModuleUnique({{}, vert_code.size(), (const uint32_t *) vert_code.data()});
     _frag_shader = device.createShaderModuleUnique({{}, frag_code.size(), (const uint32_t *) frag_code.data()});
 

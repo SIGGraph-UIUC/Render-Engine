@@ -9,11 +9,11 @@ std::unique_ptr<RenderEngine> RenderEngine::make_engine(EngineType type) {
     switch (type) {
         case EngineType::VULKAN: {
             std::cout << "CREATING VULKAN ENGINE" << std::endl;
-            return std::unique_ptr<RenderEngine>(new VkRenderEngine());
+            return std::make_unique<VkRenderEngine>();
         }
         case EngineType::OPENGL: {
             std::cout << "CREATING OPENGL ENGINE" << std::endl;
-            return std::unique_ptr<RenderEngine>(new GlRenderEngine());
+            return std::make_unique<GlRenderEngine>();
         }
         default: {
             std::cerr << "Invalid engine type provided\n";
